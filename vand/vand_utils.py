@@ -45,6 +45,20 @@ class VandBasicAPITool:
                 result.append(function)
         return result
 
+    @property
+    def tools(self):
+        # Return functions in newer "tool" format for OpenAI
+        result = []
+
+        for function in self.functions:
+            tool = {
+                "type": "function",
+                "function": function
+            }
+            result.append(tool)
+
+        return result
+
     @classmethod
     def vand(cls):
         vandToolPack = cls.get_toolpack("default")

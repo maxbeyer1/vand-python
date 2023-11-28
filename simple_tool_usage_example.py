@@ -6,7 +6,7 @@ from termcolor import colored
 
 import openai
 
-from vand.vand_utils import VandBasicAPITool
+from vand import VandBasicAPITool
 
 '''
 1. Get a ToolPack (e.g. Weather)
