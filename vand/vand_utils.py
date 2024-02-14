@@ -91,8 +91,11 @@ class VandBasicAPITool:
 
     @classmethod
     def execute_function_call(cls, message):
-        functionName = message["function_call"]["name"]
-        args = json.loads(message["function_call"].get("arguments", {}))
+        functionCall = vars(message["function_call"])
+        # functionName = message["function_call"]["name"]
+        functionName = functionCall["name"]
+        # args = json.loads(message["function_call"].get("arguments", {}))
+        args = json.loads(functionCall.get("arguments", {}))
         functions = None # normal functions will not return additional function calls
         # default function for chat complettion calls.
 
@@ -119,21 +122,24 @@ class VandBasicAPITool:
             result_message = f"No endpoint found for the function {functionName}."
             return result_message, functions
 
+
         # Replace path parameters in the path
         for param in params:
             if param['in'] == 'path' and param['name'] in args:
                 path = path.replace('{' + param['name'] + '}', str(args[param['name']]))
-        
+
         query_params = {param['name']: args[param['name']] for param in params if param['in'] == 'query' and param['name'] in args}
-        
+
         if props == {}:
             body_params = None
         else:
             body_params = {param: args[param] for param in props if param in args}
-        
+
+        query_params['appid'] = 'QUPTLW-JJEKPTH3YR'
+
         headers = {}
         api_response = requests.request(method, base_url + path, headers=headers, params=query_params, json=body_params)
-            
+
         if api_response.status_code != 200:
             result_message = (
                 f"{api_response.status_code}: {api_response.reason}"
@@ -161,4 +167,3 @@ class VandBasicAPITool:
             if cls._find_function("getLucky"):
                 functions = cls._find_function("getLucky").functions
         return result_message, functions
-
